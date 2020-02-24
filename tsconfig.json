@@ -1,0 +1,15 @@
+{
+  "compilerOptions": {
+    "outDir": "dist",
+    "target": "ES5",
+    "module": "ES6",
+    "noImplicitAny": true,
+    "removeComments": false,
+    "moduleResolution": "node",
+    "declaration": true,
+    "declarationDir": "./"
+  },
+  "files": [
+    "index.ts"
+  ]
+}
