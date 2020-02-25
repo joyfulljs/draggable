@@ -1,45 +1,49 @@
 
 import XTouch from '@joyfulljs/xtouch';
 
+/**
+ * make a element draggable
+ * @param el target html element
+ * @param options options
+ */
 export default function Draggable(el: HTMLElement, options: IOptions) {
 
   // matrix(1, 0, 0, 1, -60, -49)
   // matrix(3.5, 0, 0, 3.5, 0, 0)
 
-  const oldParts = getTransform(el);
-  let startX: number = 0, startY: number = 0;
-  let isTouchDown: boolean = false;
   const unbind = XTouch(el, handleDown, handleMove, handleUp, handleUp);
+  const oldParts = getTransform(el);
+
+  let { onMoving, maxX, maxY, minX, minY } = options || {};
+  let startX: number = 0, startY: number = 0;
+  let beginX: number = 0, beginY: number = 0;
+  let isTouchDown: boolean = false;
 
   function handleDown(e: TouchEvent) {
     isTouchDown = true;
-    startX = e.touches[0].pageX;
-    startY = e.touches[0].pageY;
+    beginX = startX = e.touches[0].pageX;
+    beginY = startY = e.touches[0].pageY;
   }
 
   function handleMove(e: TouchEvent) {
     if (isTouchDown) {
       const touch = e.touches[0];
       let parts: Array<string | number> = getTransform(el);
-
       let deltX = touch.pageX - startX + +parts[4];
       let deltY = touch.pageY - startY + +parts[5];
 
       startX = touch.pageX;
       startY = touch.pageY;
 
-      let maxX = el.offsetWidth - 50;
-      let maxY = el.offsetHeight - 50;
-      let minX = -maxX;
-      let minY = -maxY;
+      // take transform: scale into consideration
       // TODO: does transformOrigin affect the result?
       if (parts[0] > 1) {
         maxX *= +parts[0];
         minX *= +parts[0];
       }
       if (parts[3] > 1) {
-        maxY *= +parts[0];
-        minY *= +parts[0];
+        maxY *= +parts[3];
+        minY *= +parts[3];
       }
       if (deltX > maxX) {
         deltX = maxX
@@ -52,6 +56,14 @@ export default function Draggable(el: HTMLElement, options: IOptions) {
       }
       else if (deltY < minY) {
         deltY = minY
+      }
+
+      if (onMoving && onMoving({
+        deltX: touch.pageX - beginX,
+        deltY: touch.pageY - beginY,
+        originalEvent: e
+      }) === false) {
+        return
       }
 
       parts[4] = deltX;
@@ -77,7 +89,6 @@ export default function Draggable(el: HTMLElement, options: IOptions) {
   }
 }
 
-
 /**
  * get computed style of transform
  * @param el target html element
@@ -92,8 +103,29 @@ export function getTransform(el: HTMLElement): string[] {
 
 export interface IOptions {
   /**
-   * triggered when user scaling
+   * triggered when dragging. 
+   * return false to cancel this moving.
    * @param e event argument { scale: number }
    */
-  onScaleChange(e: { scale: number }): void;
+  onMoving(e: {
+    deltX: number,
+    deltY: number,
+    originalEvent: TouchEvent
+  }): boolean;
+  /**
+   * x轴正向最大拖动
+   */
+  maxX?: number;
+  /**
+   * y轴正向最大拖动
+   */
+  maxY?: number;
+  /**
+   * x轴负向最大拖动
+   */
+  minX?: number;
+  /**
+   * y轴负向最大拖动
+   */
+  minY?: number;
 }

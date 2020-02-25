@@ -4,11 +4,44 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Document</title>
+  <title>Draggable Demo</title>
+  <script src="../dist/draggable.min.js"></script>
+  <style>
+    * {
+      box-sizing: border-box;
+      user-select: none;
+    }
+
+    #target,
+    #target2,
+    #target3 {
+      position: absolute;
+      width: 100px;
+      height: 100px;
+      background-color: green;
+      padding: 10px;
+      color: white;
+    }
+
+    #target2 {
+      left: 120px;
+    }
+
+    #target3 {
+      left: 240px;
+    }
+  </style>
 </head>
 
 <body>
-
+  <div id="target2">只能X方向拖动</div>
+  <div id="target3">只能Y方向拖动</div>
+  <div id="target">自由拖动</div>
+  <script>
+    Draggable.default(target, { onMoving(e) { console.log(e); } })
+    Draggable.default(target3, { maxX: 0, minX: 0 })
+    Draggable.default(target2, { maxY: 0, minY: 0 })
+  </script>
 </body>
 
 </html>
