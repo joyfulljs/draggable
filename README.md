@@ -1,9 +1,9 @@
-# make element scalable by nouse wheel
+# make element draggable
 
 # useage
 
 ```JS
-import Scalable from '@joyfulljs/draggable';
+import Draggable from '@joyfulljs/draggable';
 
 // ...
 mount(){
