@@ -60,7 +60,7 @@ interface IOptions {
 
 # tip
 
-your can combine 'maxX/maxY/minX/minY' to achieve some special functonality.  
+your can combine 'maxX/maxY/minX/minY' to achieve some special functionality.  
 for example:  
 - set `maxX=0` and `minX=0` at the same time to make only draggable at y direction
 - set `maxY=0` and `minY=0` at the same time to make only draggable at x direction
