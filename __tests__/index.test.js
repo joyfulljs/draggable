@@ -1,28 +1,9 @@
 
 const $ = require('jquery');
 const { default: Draggable } = require('../dist/index.c');
+const jestUtils = require('@joyfulljs/jest-utils');
 
-// use jquery to bind/remove event
-const oldBinder = HTMLElement.prototype.addEventListener;
-const oldRemove = HTMLElement.prototype.removeEventListener;
-
-const newBinder = function (type, callback) {
-  this.addEventListener = oldBinder;
-  $(this).on(type, callback);
-  this.addEventListener = newBinder;
-}
-
-const newRemove = function (type, callback) {
-  this.removeEventListener = oldRemove;
-  $(this).off(type, callback);
-  this.removeEventListener = newRemove;
-}
-
-HTMLElement.prototype.addEventListener = newBinder;
-HTMLElement.prototype.removeEventListener = newRemove;
-
-window.addEventListener = newBinder;
-window.removeEventListener = newRemove;
+jestUtils.mockEventBinding();
 
 const startEvent = $.Event('mousedown', { pageX: 20, pageY: 30 });
 const moveEvent = $.Event('mousemove', { pageX: 30, pageY: 40 });
