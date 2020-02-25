@@ -15,14 +15,10 @@ export declare function getTransform(el: HTMLElement): string[];
 export interface IOptions {
     /**
      * triggered when dragging.
-     * return false to cancel this moving.
-     * @param e event argument { scale: number }
+     * return false to cancel this movement.
+     * @param e event argument { deltX:number, deltX:number, originalEvent:TouchEvent }
      */
-    onMoving(e: {
-        deltX: number;
-        deltY: number;
-        originalEvent: TouchEvent;
-    }): boolean;
+    onMoving(e: IMoveEvent): boolean;
     /**
      * x轴正向最大拖动
      */
@@ -39,4 +35,20 @@ export interface IOptions {
      * y轴负向最大拖动
      */
     minY?: number;
+}
+export interface IMoveEvent {
+    /**
+     * move distance for x direction
+     */
+    deltX: number;
+    /**
+     * move distance for y direction
+     */
+    deltY: number;
+    /**
+     * the original event argument
+     * TouchEvent for touch device
+     * MouseEvent for none-touch device
+     */
+    originalEvent: TouchEvent;
 }
