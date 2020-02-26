@@ -28,26 +28,45 @@ test('drag correctly', () => {
   expect(trans).toBe('matrix(1,0,0,1,10,10)')
 })
 
-test('trigger onMoving correctly', () => {
+test('trigger onMoving/onStart/onEnd correctly', () => {
 
   const el = getEl();
-  let eventArg;
+  let eventArg = null;
+
+  const onStart = jest.fn();
+  const onEnd = jest.fn();
 
   new Draggable(el, {
     onMoving(e) {
       eventArg = e
-    }
+    },
+    onStart: onStart,
+    onEnd: onEnd
   });
 
   $(el).trigger(startEvent);
 
   $(window).trigger(moveEvent);
+
+  // test onStart/onMoving called
+  expect(onStart).toHaveBeenCalledTimes(1);
+  expect(eventArg).not.toBeNull();
+
+  // test onMoving arguments is given correctly
   expect(eventArg.deltX).toBe(10);
-  expect(eventArg.deltY).toBe(10)
+  expect(eventArg.deltY).toBe(10);
+  expect(eventArg.totalDeltX).toBe(10);
+  expect(eventArg.totalDeltY).toBe(10)
 
   $(window).trigger(moveEvent2);
-  expect(eventArg.deltX).toBe(20);
-  expect(eventArg.deltY).toBe(30)
+  expect(eventArg.deltX).toBe(10);
+  expect(eventArg.deltY).toBe(20);
+  expect(eventArg.totalDeltX).toBe(20);
+  expect(eventArg.totalDeltY).toBe(30);
+
+  // test onEnd called
+  $(el).trigger($.Event('mouseup'));
+  expect(onEnd).toHaveBeenCalledTimes(1);
 })
 
 test('treat maxX/maxY correctly', () => {
@@ -81,17 +100,17 @@ test('treat minX/minY correctly', () => {
 })
 
 
-test('treat stay correctly', () => {
-  const el = getEl();
-  new Draggable(el, {
-    stay: true
-  });
+// test('treat stay correctly', () => {
+//   const el = getEl();
+//   new Draggable(el, {
+//     stay: true
+//   });
 
-  $(el).trigger(startEvent);
-  $(window).trigger(
-    $.Event('mousemove', { pageX: 10, pageY: 20 })
-  );
+//   $(el).trigger(startEvent);
+//   $(window).trigger(
+//     $.Event('mousemove', { pageX: 10, pageY: 20 })
+//   );
 
-  const trans = el.style.transform;
-  expect(trans).toBe('')
-})
+//   const trans = el.style.transform;
+//   expect(trans).toBe('')
+// })

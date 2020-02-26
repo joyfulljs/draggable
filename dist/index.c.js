@@ -94,7 +94,7 @@ function Draggable(el, options) {
     // matrix(3.5, 0, 0, 3.5, 0, 0)
     var unbind = XTouch(el, handleDown, handleMove, handleUp, handleUp);
     var oldParts = getTransform(el);
-    var _a = options || {}, onMoving = _a.onMoving, maxX = _a.maxX, maxY = _a.maxY, minX = _a.minX, minY = _a.minY, stay = _a.stay;
+    var _a = options || {}, onMoving = _a.onMoving, onStart = _a.onStart, onEnd = _a.onEnd, maxX = _a.maxX, maxY = _a.maxY, minX = _a.minX, minY = _a.minY;
     var startX = 0, startY = 0;
     var beginX = 0, beginY = 0;
     var isTouchDown = false;
@@ -102,13 +102,16 @@ function Draggable(el, options) {
         isTouchDown = true;
         beginX = startX = e.touches[0].pageX;
         beginY = startY = e.touches[0].pageY;
+        onStart && onStart(e);
     }
     function handleMove(e) {
         if (isTouchDown) {
             var touch = e.touches[0];
             var parts = getTransform(el);
-            var deltX = touch.pageX - startX + +parts[4];
-            var deltY = touch.pageY - startY + +parts[5];
+            var deltX = touch.pageX - startX;
+            var deltY = touch.pageY - startY;
+            var x = deltX + +parts[4];
+            var y = deltY + +parts[5];
             startX = touch.pageX;
             startY = touch.pageY;
             // take transform: scale into consideration
@@ -121,34 +124,35 @@ function Draggable(el, options) {
                 maxY *= +parts[3];
                 minY *= +parts[3];
             }
-            if (deltX > maxX) {
-                deltX = maxX;
+            if (x > maxX) {
+                x = maxX;
             }
-            else if (deltX < minX) {
-                deltX = minX;
+            else if (x < minX) {
+                x = minX;
             }
-            if (deltY > maxY) {
-                deltY = maxY;
+            if (y > maxY) {
+                y = maxY;
             }
-            else if (deltY < minY) {
-                deltY = minY;
+            else if (y < minY) {
+                y = minY;
             }
             if (onMoving && onMoving({
-                deltX: touch.pageX - beginX,
-                deltY: touch.pageY - beginY,
+                totalDeltX: touch.pageX - beginX,
+                totalDeltY: touch.pageY - beginY,
+                deltX: deltX,
+                deltY: deltY,
                 originalEvent: e
             }) === false) {
                 return;
             }
-            if (!stay) {
-                parts[4] = deltX;
-                parts[5] = deltY;
-                el.style.transform = "matrix(" + parts.join(',') + ")";
-            }
+            parts[4] = x;
+            parts[5] = y;
+            el.style.transform = "matrix(" + parts.join(',') + ")";
         }
     }
-    function handleUp() {
+    function handleUp(e) {
         isTouchDown = false;
+        onEnd && onEnd(e);
     }
     function reset() {
         var parts = getTransform(el);

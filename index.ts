@@ -14,7 +14,7 @@ export default function Draggable(el: HTMLElement, options: IOptions) {
   const unbind = XTouch(el, handleDown, handleMove, handleUp, handleUp);
   const oldParts = getTransform(el);
 
-  let { onMoving, maxX, maxY, minX, minY, stay } = options || {};
+  let { onMoving, onStart, onEnd, maxX, maxY, minX, minY } = options || {};
   let startX: number = 0, startY: number = 0;
   let beginX: number = 0, beginY: number = 0;
   let isTouchDown: boolean = false;
@@ -23,14 +23,17 @@ export default function Draggable(el: HTMLElement, options: IOptions) {
     isTouchDown = true;
     beginX = startX = e.touches[0].pageX;
     beginY = startY = e.touches[0].pageY;
+    onStart && onStart(e);
   }
 
   function handleMove(e: TouchEvent) {
     if (isTouchDown) {
       const touch = e.touches[0];
       let parts: Array<string | number> = getTransform(el);
-      let deltX = touch.pageX - startX + +parts[4];
-      let deltY = touch.pageY - startY + +parts[5];
+      let deltX = touch.pageX - startX;
+      let deltY = touch.pageY - startY;
+      let x = deltX + +parts[4];
+      let y = deltY + +parts[5];
 
       startX = touch.pageX;
       startY = touch.pageY;
@@ -45,37 +48,36 @@ export default function Draggable(el: HTMLElement, options: IOptions) {
         maxY *= +parts[3];
         minY *= +parts[3];
       }
-      if (deltX > maxX) {
-        deltX = maxX
+      if (x > maxX) {
+        x = maxX
+      } else if (x < minX) {
+        x = minX
       }
-      else if (deltX < minX) {
-        deltX = minX
-      }
-      if (deltY > maxY) {
-        deltY = maxY
-      }
-      else if (deltY < minY) {
-        deltY = minY
+      if (y > maxY) {
+        y = maxY
+      } else if (y < minY) {
+        y = minY
       }
 
       if (onMoving && onMoving({
-        deltX: touch.pageX - beginX,
-        deltY: touch.pageY - beginY,
+        totalDeltX: touch.pageX - beginX,
+        totalDeltY: touch.pageY - beginY,
+        deltX,
+        deltY,
         originalEvent: e
       }) === false) {
         return
       }
 
-      if (!stay) {
-        parts[4] = deltX;
-        parts[5] = deltY;
-        el.style.transform = `matrix(${parts.join(',')})`;
-      }
+      parts[4] = x;
+      parts[5] = y;
+      el.style.transform = `matrix(${parts.join(',')})`;
     }
   }
 
-  function handleUp() {
+  function handleUp(e: TouchEvent) {
     isTouchDown = false;
+    onEnd && onEnd(e)
   }
 
   function reset() {
@@ -105,16 +107,21 @@ export function getTransform(el: HTMLElement): string[] {
 
 export interface IOptions {
   /**
-   * triggered when dragging. 
+   * triggered when touchmove/mousemove 
    * return false to cancel this movement.
-   * @param e event argument { deltX:number, deltX:number, originalEvent:TouchEvent }
+   * @param e e
    */
   onMoving(e: IMoveEvent): boolean;
   /**
-   * set true to prevent moving the element,
-   * used when only need onMoving callback.
+   * triggered when touchstart/mousedown
+   * @param e e
    */
-  stay?: boolean;
+  onStart(e: TouchEvent): boolean;
+  /**
+   * triggered when touchend/mouseup
+   * @param e e
+   */
+  onEnd(e: TouchEvent): void;
   /**
    * x轴正向最大拖动
    */
@@ -135,17 +142,25 @@ export interface IOptions {
 
 export interface IMoveEvent {
   /**
+   * total move distance for x direction since start
+   */
+  totalDeltX: number;
+  /**
+   * total move distance for Y direction since start
+   */
+  totalDeltY: number;
+  /**
    * move distance for x direction
    */
-  deltX: number,
+  deltX: number;
   /**
    * move distance for y direction
    */
-  deltY: number,
+  deltY: number;
   /**
    * the original event argument
    * TouchEvent for touch device
    * MouseEvent for none-touch device
    */
-  originalEvent: TouchEvent
+  originalEvent: TouchEvent;
 }

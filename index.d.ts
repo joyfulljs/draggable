@@ -14,16 +14,21 @@ export default function Draggable(el: HTMLElement, options: IOptions): {
 export declare function getTransform(el: HTMLElement): string[];
 export interface IOptions {
     /**
-     * triggered when dragging.
+     * triggered when touchmove/mousemove
      * return false to cancel this movement.
-     * @param e event argument { deltX:number, deltX:number, originalEvent:TouchEvent }
+     * @param e e
      */
     onMoving(e: IMoveEvent): boolean;
     /**
-     * set true to prevent moving the element,
-     * used when only need onMoving callback.
+     * triggered when touchstart/mousedown
+     * @param e e
      */
-    stay?: boolean;
+    onStart(e: TouchEvent): boolean;
+    /**
+     * triggered when touchend/mouseup
+     * @param e e
+     */
+    onEnd(e: TouchEvent): void;
     /**
      * x轴正向最大拖动
      */
@@ -42,6 +47,14 @@ export interface IOptions {
     minY?: number;
 }
 export interface IMoveEvent {
+    /**
+     * total move distance for x direction since start
+     */
+    totalDeltX: number;
+    /**
+     * total move distance for Y direction since start
+     */
+    totalDeltY: number;
     /**
      * move distance for x direction
      */

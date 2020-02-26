@@ -30,16 +30,21 @@ function Draggable(el: HTMLElement, options: IOptions): {
 
 interface IOptions {
   /**
-   * triggered when dragging. 
+   * triggered when touchmove/mousemove
    * return false to cancel this movement.
-   * @param e event argument { deltX:number, deltX:number, originalEvent:TouchEvent }
+   * @param e e
    */
   onMoving(e: IMoveEvent): boolean;
   /**
-   * set true to prevent moving the element,
-   * used when only need onMoving callback.
+   * triggered when touchstart/mousedown
+   * @param e e
    */
-  stay?: boolean;
+  onStart(e: TouchEvent): boolean;
+  /**
+   * triggered when touchend/mouseup
+   * @param e e
+   */
+  onEnd(e: TouchEvent): void;
   /**
    * x轴正向最大拖动
    */
@@ -57,14 +62,42 @@ interface IOptions {
    */
   minY?: number;
 }
+
+interface IMoveEvent {
+  /**
+   * total move distance for x direction since start
+   */
+  totalDeltX: number;
+  /**
+   * total move distance for Y direction since start
+   */
+  totalDeltY: number;
+  /**
+   * move distance for x direction
+   */
+  deltX: number;
+  /**
+   * move distance for y direction
+   */
+  deltY: number;
+  /**
+   * the original event argument
+   * TouchEvent for touch device
+   * MouseEvent for none-touch device
+   */
+  originalEvent: TouchEvent;
+}
+
 ```
 
 # tip
 
-your can combine 'maxX/maxY/minX/minY' to achieve some special functionality.  
+You can combine 'maxX/maxY/minX/minY' to achieve some special functionality.  
 for example:  
 - set `maxX=0` and `minX=0` at the same time to make only draggable at y direction
 - set `maxY=0` and `minY=0` at the same time to make only draggable at x direction
+
+Return `false` inside `onMoving` callback to prevent moving the element. 
 
 # LICENSE
 
