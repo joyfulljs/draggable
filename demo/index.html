@@ -34,9 +34,9 @@
 </head>
 
 <body>
-  <div id="target2">只能X方向拖动</div>
-  <div id="target3">只能Y方向拖动</div>
-  <div id="target">自由拖动</div>
+  <div id="target2">only x direction</div>
+  <div id="target3">only y direction</div>
+  <div id="target">free drag</div>
   <script>
     Draggable.default(target, { onMoving(e) { console.log(e); } })
     Draggable.default(target3, { maxX: 0, minX: 0 })
