@@ -20,6 +20,11 @@ export interface IOptions {
      */
     onMoving(e: IMoveEvent): boolean;
     /**
+     * set true to prevent moving the element,
+     * used when only need onMoving callback.
+     */
+    stay?: boolean;
+    /**
      * x轴正向最大拖动
      */
     maxX?: number;

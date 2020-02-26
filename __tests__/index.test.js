@@ -79,3 +79,19 @@ test('treat minX/minY correctly', () => {
   const trans = el.style.transform;
   expect(trans).toBe('matrix(1,0,0,1,-5,0)')
 })
+
+
+test('treat stay correctly', () => {
+  const el = getEl();
+  new Draggable(el, {
+    stay: true
+  });
+
+  $(el).trigger(startEvent);
+  $(window).trigger(
+    $.Event('mousemove', { pageX: 10, pageY: 20 })
+  );
+
+  const trans = el.style.transform;
+  expect(trans).toBe('')
+})

@@ -94,7 +94,7 @@ function Draggable(el, options) {
     // matrix(3.5, 0, 0, 3.5, 0, 0)
     var unbind = XTouch(el, handleDown, handleMove, handleUp, handleUp);
     var oldParts = getTransform(el);
-    var _a = options || {}, onMoving = _a.onMoving, maxX = _a.maxX, maxY = _a.maxY, minX = _a.minX, minY = _a.minY;
+    var _a = options || {}, onMoving = _a.onMoving, maxX = _a.maxX, maxY = _a.maxY, minX = _a.minX, minY = _a.minY, stay = _a.stay;
     var startX = 0, startY = 0;
     var beginX = 0, beginY = 0;
     var isTouchDown = false;
@@ -140,9 +140,11 @@ function Draggable(el, options) {
             }) === false) {
                 return;
             }
-            parts[4] = deltX;
-            parts[5] = deltY;
-            el.style.transform = "matrix(" + parts.join(',') + ")";
+            if (!stay) {
+                parts[4] = deltX;
+                parts[5] = deltY;
+                el.style.transform = "matrix(" + parts.join(',') + ")";
+            }
         }
     }
     function handleUp() {

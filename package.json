@@ -1,6 +1,6 @@
 {
   "name": "@joyfulljs/draggable",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "make element draggable",
   "main": "dist/index.c.js",
   "module": "dist/index.js",

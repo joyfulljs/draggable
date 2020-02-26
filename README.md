@@ -30,15 +30,16 @@ function Draggable(el: HTMLElement, options: IOptions): {
 
 interface IOptions {
   /**
-   * triggered when dragging.
-   * return false to cancel this moving.
-   * @param e event argument { scale: number }
+   * triggered when dragging. 
+   * return false to cancel this movement.
+   * @param e event argument { deltX:number, deltX:number, originalEvent:TouchEvent }
    */
-  onMoving(e: {
-      deltX: number;
-      deltY: number;
-      originalEvent: TouchEvent;
-  }): boolean;
+  onMoving(e: IMoveEvent): boolean;
+  /**
+   * set true to prevent moving the element,
+   * used when only need onMoving callback.
+   */
+  stay?: boolean;
   /**
    * x轴正向最大拖动
    */

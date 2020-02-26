@@ -14,7 +14,7 @@ export default function Draggable(el: HTMLElement, options: IOptions) {
   const unbind = XTouch(el, handleDown, handleMove, handleUp, handleUp);
   const oldParts = getTransform(el);
 
-  let { onMoving, maxX, maxY, minX, minY } = options || {};
+  let { onMoving, maxX, maxY, minX, minY, stay } = options || {};
   let startX: number = 0, startY: number = 0;
   let beginX: number = 0, beginY: number = 0;
   let isTouchDown: boolean = false;
@@ -66,9 +66,11 @@ export default function Draggable(el: HTMLElement, options: IOptions) {
         return
       }
 
-      parts[4] = deltX;
-      parts[5] = deltY;
-      el.style.transform = `matrix(${parts.join(',')})`;
+      if (!stay) {
+        parts[4] = deltX;
+        parts[5] = deltY;
+        el.style.transform = `matrix(${parts.join(',')})`;
+      }
     }
   }
 
@@ -108,6 +110,11 @@ export interface IOptions {
    * @param e event argument { deltX:number, deltX:number, originalEvent:TouchEvent }
    */
   onMoving(e: IMoveEvent): boolean;
+  /**
+   * set true to prevent moving the element,
+   * used when only need onMoving callback.
+   */
+  stay?: boolean;
   /**
    * x轴正向最大拖动
    */
