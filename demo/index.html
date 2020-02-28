@@ -5,7 +5,6 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Draggable Demo</title>
-  <script src="../dist/draggable.min.js"></script>
   <style>
     * {
       box-sizing: border-box;
@@ -37,6 +36,7 @@
   <div id="target2">only x direction</div>
   <div id="target3">only y direction</div>
   <div id="target">free drag</div>
+  <script src="../dist/draggable.min.js"></script>
   <script>
     Draggable.default(target, { onMoving(e) { console.log(e); } })
     Draggable.default(target3, { maxX: 0, minX: 0 })
