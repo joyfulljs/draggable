@@ -1,4 +1,9 @@
+import { getProperty } from '@joyfulljs/vendor-property';
 import XTouch from '@joyfulljs/xtouch';
+/**
+ * `transform` property name with browser vendor prefix if needed.
+ */
+export var transformProperty = getProperty('transform');
 /**
  * make a element draggable
  * @param el target html element
@@ -62,7 +67,8 @@ export default function Draggable(el, options) {
             }
             parts[4] = x;
             parts[5] = y;
-            el.style.transform = "matrix(" + parts.join(',') + ")";
+            // @ts-ignore ts handle string index incorrectly, so ignore it.
+            el.style[transformProperty] = "matrix(" + parts.join(',') + ")";
         }
     }
     function handleUp(e) {
@@ -73,7 +79,8 @@ export default function Draggable(el, options) {
         var parts = getTransform(el);
         parts[4] = oldParts[4];
         parts[5] = oldParts[5];
-        el.style.transform = "matrix(" + parts.join(',') + ")";
+        // @ts-ignore
+        el.style[transformProperty] = "matrix(" + parts.join(',') + ")";
     }
     return {
         reset: reset,
@@ -85,7 +92,8 @@ export default function Draggable(el, options) {
  * @param el target html element
  */
 export function getTransform(el) {
-    var transform = window.getComputedStyle(el).transform;
+    // @ts-ignore
+    var transform = window.getComputedStyle(el)[transformProperty];
     if (!transform || transform === 'none') {
         transform = 'matrix(1, 0, 0, 1, 0, 0)';
     }

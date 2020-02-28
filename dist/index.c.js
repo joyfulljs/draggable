@@ -3,6 +3,31 @@
 Object.defineProperty(exports, '__esModule', { value: true });
 
 /**
+ * vendor prefixes that being taken into consideration.
+ */
+var vendors = ['webkit', 'ms', 'moz', 'o'];
+/**
+ * get vendor property name that contains uppercase letter.
+ * e.g. webkitTransform
+ * @param prop property name. for example: transform
+ * @param host optional. property owner. default to `document.body.style`.
+ */
+function getProperty(prop, host) {
+    var targetHost = host || document.body.style;
+    if (!(prop in targetHost)) {
+        var char1 = prop.charAt(0).toUpperCase();
+        var charLeft = prop.substr(1);
+        for (var i = 0; i < vendors.length; i++) {
+            var vendorProp = vendors[i] + char1 + charLeft;
+            if (vendorProp in targetHost) {
+                return vendorProp;
+            }
+        }
+    }
+    return prop;
+}
+
+/**
  * bind event
  * @param target window | HTMLElement
  * @param type event type
@@ -85,6 +110,10 @@ function XTouch(el, onStart, onMove, onEnd, onCancel) {
 }
 
 /**
+ * `transform` property name with browser vendor prefix if needed.
+ */
+var transformProperty = getProperty('transform');
+/**
  * make a element draggable
  * @param el target html element
  * @param options options
@@ -147,7 +176,8 @@ function Draggable(el, options) {
             }
             parts[4] = x;
             parts[5] = y;
-            el.style.transform = "matrix(" + parts.join(',') + ")";
+            // @ts-ignore ts handle string index incorrectly, so ignore it.
+            el.style[transformProperty] = "matrix(" + parts.join(',') + ")";
         }
     }
     function handleUp(e) {
@@ -158,7 +188,8 @@ function Draggable(el, options) {
         var parts = getTransform(el);
         parts[4] = oldParts[4];
         parts[5] = oldParts[5];
-        el.style.transform = "matrix(" + parts.join(',') + ")";
+        // @ts-ignore
+        el.style[transformProperty] = "matrix(" + parts.join(',') + ")";
     }
     return {
         reset: reset,
@@ -170,7 +201,8 @@ function Draggable(el, options) {
  * @param el target html element
  */
 function getTransform(el) {
-    var transform = window.getComputedStyle(el).transform;
+    // @ts-ignore
+    var transform = window.getComputedStyle(el)[transformProperty];
     if (!transform || transform === 'none') {
         transform = 'matrix(1, 0, 0, 1, 0, 0)';
     }
@@ -179,3 +211,4 @@ function getTransform(el) {
 
 exports.default = Draggable;
 exports.getTransform = getTransform;
+exports.transformProperty = transformProperty;

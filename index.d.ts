@@ -1,4 +1,8 @@
 /**
+ * `transform` property name with browser vendor prefix if needed.
+ */
+export declare const transformProperty: string;
+/**
  * make a element draggable
  * @param el target html element
  * @param options options
@@ -12,6 +16,9 @@ export default function Draggable(el: HTMLElement, options: IOptions): {
  * @param el target html element
  */
 export declare function getTransform(el: HTMLElement): string[];
+/**
+ * instance configraton options
+ */
 export interface IOptions {
     /**
      * triggered when touchmove/mousemove
