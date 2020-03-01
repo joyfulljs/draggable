@@ -10,14 +10,12 @@ export var transformProperty = getProperty('transform');
  * @param options options
  */
 export default function Draggable(el, options) {
-    // matrix(1, 0, 0, 1, -60, -49)
-    // matrix(3.5, 0, 0, 3.5, 0, 0)
-    var unbind = XTouch(el, handleDown, handleMove, handleUp, handleUp);
-    var oldParts = getTransform(el);
-    var _a = options || {}, onMoving = _a.onMoving, onStart = _a.onStart, onEnd = _a.onEnd, maxX = _a.maxX, maxY = _a.maxY, minX = _a.minX, minY = _a.minY;
+    var _a = options || {}, onMoving = _a.onMoving, onStart = _a.onStart, onEnd = _a.onEnd, maxX = _a.maxX, maxY = _a.maxY, minX = _a.minX, minY = _a.minY, useCapture = _a.useCapture;
     var startX = 0, startY = 0;
     var beginX = 0, beginY = 0;
     var isTouchDown = false;
+    var unbind = XTouch(el, { onStart: handleDown, onMove: handleMove, onEnd: handleUp, capture: useCapture });
+    var oldParts = getTransform(el);
     function handleDown(e) {
         isTouchDown = true;
         beginX = startX = e.touches[0].pageX;

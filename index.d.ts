@@ -52,6 +52,10 @@ export interface IOptions {
      * y轴负向最大拖动
      */
     minY?: number;
+    /**
+     * use capture phase for the underneth event binding.
+     */
+    useCapture?: boolean;
 }
 export interface IMoveEvent {
     /**

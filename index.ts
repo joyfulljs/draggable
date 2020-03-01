@@ -14,16 +14,13 @@ export const transformProperty = getProperty('transform');
  */
 export default function Draggable(el: HTMLElement, options: IOptions) {
 
-  // matrix(1, 0, 0, 1, -60, -49)
-  // matrix(3.5, 0, 0, 3.5, 0, 0)
-
-  const unbind = XTouch(el, handleDown, handleMove, handleUp, handleUp);
-  const oldParts = getTransform(el);
-
-  let { onMoving, onStart, onEnd, maxX, maxY, minX, minY } = options || {};
+  let { onMoving, onStart, onEnd, maxX, maxY, minX, minY, useCapture } = options || {};
   let startX: number = 0, startY: number = 0;
   let beginX: number = 0, beginY: number = 0;
   let isTouchDown: boolean = false;
+
+  const unbind = XTouch(el, { onStart: handleDown, onMove: handleMove, onEnd: handleUp, capture: useCapture });
+  const oldParts = getTransform(el);
 
   function handleDown(e: TouchEvent) {
     isTouchDown = true;
@@ -150,6 +147,10 @@ export interface IOptions {
    * y轴负向最大拖动
    */
   minY?: number;
+  /**
+   * use capture phase for the underneth event binding.
+   */
+  useCapture?: boolean
 }
 
 export interface IMoveEvent {

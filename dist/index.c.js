@@ -50,62 +50,69 @@ function off(target, type, handler, capture) {
     target.removeEventListener(type, handler, capture);
 }
 /**
- * bind mouse or touch event according to current env
- * @param el  window | HTMLElement
- * @param onStart on start handler
- * @param onMove on move handler
- * @param onEnd on end handler
- * @param onCancel on cancel handler. useless in none-touch device.
+ * To bind event
+ * @param el taget element. required.
+ * @param options event handlers and other configration. required.
  */
-function XTouch(el, onStart, onMove, onEnd, onCancel) {
-    var isTouchDevice = 'ontouchstart' in window;
-    if (isTouchDevice) {
-        on(el, 'touchstart', onStart);
-        on(window, 'touchmove', onMove);
-        on(window, 'touchend', onEnd);
-        on(el, 'touchcancel', onCancel);
+function XTouch(el, options) {
+    if (Object.prototype.toString.call(options) !== '[object Object]') {
+        throw new Error('[xtouch]: argument `options` is missing or illegal.');
     }
-    else {
-        var oldStart_1 = onStart, oldMove_1 = onMove, oldEnd_1 = onEnd;
-        onStart = function (e) {
+    var onStart = options.onStart, onMove = options.onMove, onEnd = options.onEnd, capture = options.capture;
+    var startTarget = null;
+    var _onStart = function (e) {
+        if (e.type === 'mousedown') {
+            startTarget = e.target;
             // @ts-ignore
             e.identifier = 0;
             // @ts-ignore
             e.touches = e.changedTouches = [e];
-            oldStart_1(e);
-        };
-        onMove = function (e) {
+            // @ts-ignore
+            e.targetTouches = [e];
+        }
+        onStart(e);
+    }, _onMove = function (e) {
+        if (e.type === 'mousemove') {
             // @ts-ignore
             e.identifier = 0;
             // @ts-ignore
             e.touches = e.changedTouches = [e];
-            oldMove_1(e);
-        };
-        onEnd = function (e) {
+            // @ts-ignore
+            e.targetTouches = e.target === startTarget ? [e] : [];
+        }
+        onMove(e);
+    }, _onEnd = function (e) {
+        if (e.type === 'mouseup') {
             // @ts-ignore
             e.identifier = 0;
             // @ts-ignore
             e.touches = [];
             // @ts-ignore
             e.changedTouches = [e];
-            oldEnd_1(e);
-        };
-        on(el, 'mousedown', onStart);
-        on(window, 'mousemove', onMove);
-        on(window, 'mouseup', onEnd);
+            // @ts-ignore
+            e.targetTouches = e.target === startTarget ? [e] : [];
+        }
+        onEnd(e);
+    };
+    if (onStart) {
+        on(el, 'touchstart', _onStart, capture);
+        on(el, 'mousedown', _onStart, capture);
+    }
+    if (onMove) {
+        on(window, 'touchmove', _onMove, capture);
+        on(window, 'mousemove', _onMove, capture);
+    }
+    if (onEnd) {
+        on(window, 'touchend', _onEnd, capture);
+        on(window, 'mouseup', _onEnd, capture);
     }
     return function unbind() {
-        if (isTouchDevice) {
-            off(el, 'touchstart', onStart);
-            off(window, 'touchmove', onMove);
-            off(window, 'touchend', onEnd);
-            off(el, 'touchcancel', onCancel);
-        }
-        else {
-            off(el, 'mousedown', onStart);
-            off(window, 'mousemove', onMove);
-            off(window, 'mouseup', onEnd);
-        }
+        off(el, 'touchstart', _onStart, capture);
+        off(window, 'touchmove', _onMove, capture);
+        off(window, 'touchend', _onEnd, capture);
+        off(el, 'mousedown', _onStart, capture);
+        off(window, 'mousemove', _onMove, capture);
+        off(window, 'mouseup', _onEnd, capture);
     };
 }
 
@@ -119,14 +126,12 @@ var transformProperty = getProperty('transform');
  * @param options options
  */
 function Draggable(el, options) {
-    // matrix(1, 0, 0, 1, -60, -49)
-    // matrix(3.5, 0, 0, 3.5, 0, 0)
-    var unbind = XTouch(el, handleDown, handleMove, handleUp, handleUp);
-    var oldParts = getTransform(el);
-    var _a = options || {}, onMoving = _a.onMoving, onStart = _a.onStart, onEnd = _a.onEnd, maxX = _a.maxX, maxY = _a.maxY, minX = _a.minX, minY = _a.minY;
+    var _a = options || {}, onMoving = _a.onMoving, onStart = _a.onStart, onEnd = _a.onEnd, maxX = _a.maxX, maxY = _a.maxY, minX = _a.minX, minY = _a.minY, useCapture = _a.useCapture;
     var startX = 0, startY = 0;
     var beginX = 0, beginY = 0;
     var isTouchDown = false;
+    var unbind = XTouch(el, { onStart: handleDown, onMove: handleMove, onEnd: handleUp, capture: useCapture });
+    var oldParts = getTransform(el);
     function handleDown(e) {
         isTouchDown = true;
         beginX = startX = e.touches[0].pageX;
