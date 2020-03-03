@@ -18,29 +18,50 @@
       width: 100px;
       height: 100px;
       background-color: green;
-      padding: 10px;
+      padding: 5px;
       color: white;
     }
 
     #target2 {
+      display: none;
       left: 120px;
     }
 
     #target3 {
+      display: none;
       left: 240px;
+    }
+
+    #xtouchTip {
+      line-height: 50px;
     }
   </style>
 </head>
 
 <body>
+  <div id="xtouchTip"></div>
   <div id="target2">only x direction</div>
   <div id="target3">only y direction</div>
   <div id="target">free drag</div>
   <script src="../dist/draggable.min.js"></script>
   <script>
-    Draggable.default(target, { onMoving(e) { console.log(e); } })
-    Draggable.default(target3, { maxX: 0, minX: 0 })
-    Draggable.default(target2, { maxY: 0, minY: 0 })
+    var isXTouch = location.hash === '#xtouch';
+    if (isXTouch) {
+      xtouchTip.innerHTML = 'try toggle device in the devtool panel';
+    } else {
+      Draggable.default(target3, { maxX: 0, minX: 0 });
+      Draggable.default(target2, { maxY: 0, minY: 0 });
+      target2.style.display = target3.style.display = 'block'
+    }
+    Draggable.default(target, {
+      onMoving(e) {
+        if (isXTouch) {
+          target.innerHTML = 'using ' + e.originalEvent.type
+        } else {
+          console.log(e);
+        }
+      }
+    })
   </script>
 </body>
 
