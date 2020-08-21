@@ -1,7 +1,7 @@
 # make element draggable
 
 [![Build Status](https://travis-ci.org/joyfulljs/draggable.svg?branch=master)](https://travis-ci.org/joyfulljs/draggable)
-[![codecov](https://codecov.io/gh/joyfulljs/draggable/branch/master/graph/badge.svg?v=1)](https://codecov.io/gh/joyfulljs/draggable)
+[![codecov](https://codecov.io/gh/joyfulljs/draggable/branch/master/graph/badge.svg)](https://codecov.io/gh/joyfulljs/draggable)
 
 # useage
 
