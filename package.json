@@ -6,7 +6,8 @@
   "module": "dist/index.js",
   "scripts": {
     "build": "tsc && rollup -c",
-    "test": "jest",
+    "test": "jest --reporter=lcov --coverage",
+    "coverage": "codecov --disable=gcov,search -f coverage/coverage-final.json",
     "start": "http-server"
   },
   "repository": {
@@ -31,6 +32,8 @@
   "sideEffects": false,
   "typings": "./index.d.ts",
   "devDependencies": {
+    "@babel/preset-env": "^7.11.0",
+    "@babel/preset-typescript": "^7.10.4",
     "@joyfulljs/jest-utils": "^1.0.1",
     "@rollup/plugin-node-resolve": "^7.1.1",
     "jest": "^25.1.0",
@@ -42,6 +45,6 @@
   },
   "dependencies": {
     "@joyfulljs/vendor-property": "^1.0.1",
-    "@joyfulljs/xtouch": "^1.0.4"
+    "@joyfulljs/xtouch": "^1.0.5"
   }
 }

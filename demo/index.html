@@ -40,10 +40,12 @@
 
 <body>
   <div id="xtouchTip"></div>
-  <div id="target2">only x direction</div>
-  <div id="target3">only y direction</div>
+  <div id="target2">x direction
+    <hr> maxY: 0 minY: 0</div>
+  <div id="target3">y direction
+    <hr>maxX: 0 minX: 0</div>
   <div id="target">free drag</div>
-  <script src="../dist/draggable.min.js"></script>
+  <script src="./draggable.min.js"></script>
   <script>
     var isXTouch = location.hash === '#xtouch';
     if (isXTouch) {

@@ -43,14 +43,14 @@ export default function Draggable(el: HTMLElement, options: IOptions) {
 
       // take transform: scale into consideration
       // TODO: does transformOrigin affect the result?
-      if (parts[0] > 1) {
-        maxX *= +parts[0];
-        minX *= +parts[0];
-      }
-      if (parts[3] > 1) {
-        maxY *= +parts[3];
-        minY *= +parts[3];
-      }
+      // if (parts[0] != 1) {
+      //   maxX *= +parts[0];
+      //   minX *= +parts[0];
+      // }
+      // if (parts[3] != 1) {
+      //   maxY *= +parts[3];
+      //   minY *= +parts[3];
+      // }
       if (x > maxX) {
         x = maxX
       } else if (x < minX) {
